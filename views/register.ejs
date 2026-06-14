@@ -29,8 +29,8 @@
           <label for="email">Email Address</label>
           <input id="email" name="email" type="email" value="<%= formData.email || '' %>" required autocomplete="email">
 
-          <label for="studentId">Student ID</label>
-          <input id="studentId" name="studentId" type="text" value="<%= formData.studentId || '' %>" required maxlength="50" autocomplete="off">
+          <label id="studentIdLabel" for="studentId">Student ID <span id="studentIdRequired" style="color: var(--danger-text); display: none;">*</span></label>
+          <input id="studentId" name="studentId" type="text" value="<%= formData.studentId || '' %>" maxlength="50" autocomplete="off">
 
           <label for="phone">Phone Number <span>(optional)</span></label>
           <input id="phone" name="phone" type="tel" value="<%= formData.phone || '' %>" maxlength="30" autocomplete="tel">

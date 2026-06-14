@@ -24,8 +24,12 @@ const registrationValidators = [
     .normalizeEmail(),
   body("studentId")
     .trim()
-    .notEmpty()
-    .withMessage("Student ID is required.")
+    .custom((value, { req }) => {
+      if (req.body.ticketType === "Student" && !value) {
+        throw new Error("Student ID is required for Student tickets.");
+      }
+      return true;
+    })
     .isLength({ max: 50 })
     .withMessage("Student ID must be 50 characters or fewer.")
     .escape(),
@@ -86,7 +90,7 @@ router.post("/register", registrationValidators, async (req, res, next) => {
 
     const data = matchedData(req, { locations: ["body"] });
     const duplicateEmail = await Registration.findByEmailAndEvent(data.email, EVENT.name);
-    const duplicateStudentId = await Registration.findByStudentIdAndEvent(data.studentId, EVENT.name);
+    const duplicateStudentId = data.studentId ? await Registration.findByStudentIdAndEvent(data.studentId, EVENT.name) : null;
     const duplicate = duplicateEmail || duplicateStudentId;
 
     if (duplicate) {
@@ -96,20 +100,24 @@ router.post("/register", registrationValidators, async (req, res, next) => {
     const registration = await Registration.create({
       fullName: data.fullName,
       email: data.email,
-      studentId: data.studentId,
+      studentId: data.studentId || null,
       phone: data.phone || "",
       ticketType: data.ticketType,
       registrationId: await createUniqueRegistrationId(),
       eventName: EVENT.name
     });
 
-    await sendConfirmationEmails(registration);
+    try {
+      await sendConfirmationEmails(registration);
+    } catch (emailError) {
+      console.error("Failed to send confirmation emails:", emailError);
+    }
 
     return res.redirect(`/success?registrationId=${encodeURIComponent(registration.registrationId)}`);
   } catch (error) {
     if (error.code === "23505") {
       const duplicateEmail = await Registration.findByEmailAndEvent(req.body.email, EVENT.name);
-      const duplicateStudentId = await Registration.findByStudentIdAndEvent(req.body.studentId, EVENT.name);
+      const duplicateStudentId = req.body.studentId ? await Registration.findByStudentIdAndEvent(req.body.studentId, EVENT.name) : null;
       const duplicate = duplicateEmail || duplicateStudentId;
       if (duplicate) {
         return res.redirect(`/success?registrationId=${encodeURIComponent(duplicate.registrationId)}&alreadyRegistered=true`);

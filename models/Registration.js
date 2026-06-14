@@ -26,7 +26,7 @@ async function initialize() {
       id BIGSERIAL PRIMARY KEY,
       full_name VARCHAR(120) NOT NULL,
       email VARCHAR(254) NOT NULL,
-      student_id VARCHAR(50) NOT NULL DEFAULT '',
+      student_id VARCHAR(50),
       phone VARCHAR(30) DEFAULT '',
       ticket_type VARCHAR(40) NOT NULL CHECK (ticket_type IN ('General Admission', 'VIP', 'Student')),
       registration_id VARCHAR(80) NOT NULL UNIQUE,
@@ -40,10 +40,26 @@ async function initialize() {
 
   try {
     await pool.query(`
-      ALTER TABLE registrations ADD COLUMN IF NOT EXISTS student_id VARCHAR(50) NOT NULL DEFAULT '';
+      ALTER TABLE registrations ALTER COLUMN student_id DROP NOT NULL;
     `);
   } catch (error) {
-    console.log("Migration warning (student_id column):", error.message);
+    console.log("Migration warning (drop not null):", error.message);
+  }
+
+  try {
+    await pool.query(`
+      ALTER TABLE registrations ALTER COLUMN student_id DROP DEFAULT;
+    `);
+  } catch (error) {
+    console.log("Migration warning (drop default):", error.message);
+  }
+
+  try {
+    await pool.query(`
+      UPDATE registrations SET student_id = NULL WHERE student_id = '';
+    `);
+  } catch (error) {
+    console.log("Migration warning (set empty student_id to null):", error.message);
   }
 
   try {
@@ -74,6 +90,9 @@ async function findByEmailAndEvent(email, eventName = EVENT.name) {
 }
 
 async function findByStudentIdAndEvent(studentId, eventName = EVENT.name) {
+  if (!studentId) {
+    return null;
+  }
   const result = await pool.query(
     "SELECT * FROM registrations WHERE student_id = $1 AND event_name = $2 LIMIT 1",
     [studentId, eventName]
@@ -104,7 +123,7 @@ async function create(data) {
     [
       data.fullName,
       data.email,
-      data.studentId || "",
+      data.studentId || null,
       data.phone || "",
       data.ticketType,
       data.registrationId,
