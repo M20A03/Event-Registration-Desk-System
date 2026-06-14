@@ -1,4 +1,9 @@
-require("dotenv").config();
+const dotenvResult = require("dotenv").config();
+if (dotenvResult.error) {
+  console.error("DEBUG: dotenv failed to load:", dotenvResult.error.message);
+} else {
+  console.log("DEBUG: dotenv loaded successfully. Database URL exists:", !!process.env.DATABASE_URL);
+}
 
 const express = require("express");
 const path = require("path");
