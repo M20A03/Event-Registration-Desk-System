@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %> | <%= eventName %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <canvas class="hyper-scene" data-hyper-scene aria-hidden="true"></canvas>
+    <main class="page-shell">
+      <section class="registration-panel">
+        <div class="event-kicker">Event Registration</div>
+        <h1><%= eventName %></h1>
+        <p class="lede">Reserve your seat and receive an automatic email confirmation with a calendar invite.</p>
+
+        <% if (errors.length) { %>
+          <div class="alert" role="alert">
+            <% errors.forEach((error) => { %>
+              <p><%= error.msg %></p>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <form id="registrationForm" class="form" action="/register" method="post" novalidate>
+          <label for="fullName">Full Name</label>
+          <input id="fullName" name="fullName" type="text" value="<%= formData.fullName || '' %>" required maxlength="120" autocomplete="name">
+
+          <label for="email">Email Address</label>
+          <input id="email" name="email" type="email" value="<%= formData.email || '' %>" required autocomplete="email">
+
+          <label for="studentId">Student ID</label>
+          <input id="studentId" name="studentId" type="text" value="<%= formData.studentId || '' %>" required maxlength="50" autocomplete="off">
+
+          <label for="phone">Phone Number <span>(optional)</span></label>
+          <input id="phone" name="phone" type="tel" value="<%= formData.phone || '' %>" maxlength="30" autocomplete="tel">
+
+          <label for="ticketType">Ticket Type</label>
+          <select id="ticketType" name="ticketType" required>
+            <option value="">Select a ticket</option>
+            <% ticketTypes.forEach((ticketType) => { %>
+              <option value="<%= ticketType %>" <%= formData.ticketType === ticketType ? 'selected' : '' %>><%= ticketType %></option>
+            <% }) %>
+          </select>
+
+          <p id="clientError" class="client-error" aria-live="polite"></p>
+          <button type="submit">Register Now</button>
+        </form>
+      </section>
+    </main>
+    <script src="/js/hyper-scene.js"></script>
+    <script src="/js/register.js"></script>
+  </body>
+</html>

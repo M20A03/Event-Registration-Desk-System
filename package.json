@@ -1,0 +1,31 @@
+{
+  "name": "event-registration-app",
+  "version": "1.0.0",
+  "description": "Full-stack event registration app with Supabase Postgres and Nodemailer confirmations.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [
+    "express",
+    "supabase",
+    "postgres",
+    "nodemailer",
+    "event-registration"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

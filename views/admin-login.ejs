@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <canvas class="hyper-scene" data-hyper-scene aria-hidden="true"></canvas>
+    <main class="page-shell compact">
+      <section class="registration-panel">
+        <div class="event-kicker">Admin</div>
+        <h1>Dashboard Login</h1>
+
+        <% if (error) { %>
+          <div class="alert" role="alert"><p><%= error %></p></div>
+        <% } %>
+
+        <form class="form" action="/admin/login" method="post">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" required autocomplete="username">
+
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required autocomplete="current-password">
+
+          <button type="submit">Log In</button>
+        </form>
+      </section>
+    </main>
+    <script src="/js/hyper-scene.js"></script>
+  </body>
+</html>

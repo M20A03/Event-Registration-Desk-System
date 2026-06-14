@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= title %> | <%= eventName %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <canvas class="hyper-scene" data-hyper-scene aria-hidden="true"></canvas>
+    <main class="admin-shell">
+      <header class="admin-header">
+        <div>
+          <div class="event-kicker">Admin Dashboard</div>
+          <h1><%= eventName %></h1>
+          <p><%= registrations.length %> registered attendee<%= registrations.length === 1 ? '' : 's' %></p>
+        </div>
+        <div class="admin-actions">
+          <a class="button-link" href="/admin/download">Download as CSV</a>
+          <form action="/admin/logout" method="post">
+            <button class="secondary-button" type="submit">Log Out</button>
+          </form>
+        </div>
+      </header>
+
+      <section class="table-wrap" aria-label="Registered attendees">
+        <table>
+          <thead>
+            <tr>
+              <th>Registration ID</th>
+              <th>Name</th>
+              <th>Student ID</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Ticket</th>
+              <th>Registered</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (!registrations.length) { %>
+              <tr>
+                <td colspan="7" class="empty-cell">No registrations yet.</td>
+              </tr>
+            <% } %>
+            <% registrations.forEach((registration) => { %>
+              <tr>
+                <td><%= registration.registrationId %></td>
+                <td><%= registration.fullName %></td>
+                <td><%= registration.studentId || 'Not provided' %></td>
+                <td><%= registration.email %></td>
+                <td><%= registration.phone || 'Not provided' %></td>
+                <td><%= registration.ticketType %></td>
+                <td><%= registration.createdAt ? registration.createdAt.toLocaleString() : '' %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+    </main>
+    <script src="/js/hyper-scene.js"></script>
+  </body>
+</html>
