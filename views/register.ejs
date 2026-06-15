@@ -72,6 +72,23 @@
             <input id="collegeName" name="collegeName" type="text" value="<%= formData.collegeName || '' %>" maxlength="160" autocomplete="organization" placeholder="Enter college name">
           </div>
 
+          <fieldset class="field field-wide event-choice-group">
+            <legend>Events Participating In</legend>
+            <div class="event-choice-grid">
+              <% participatingEvents.forEach((participatingEvent) => { %>
+                <label class="event-choice">
+                  <input
+                    type="checkbox"
+                    name="participatingEvents"
+                    value="<%= participatingEvent %>"
+                    <%= (Array.isArray(formData.participatingEvents) ? formData.participatingEvents : [formData.participatingEvents].filter(Boolean)).includes(participatingEvent) ? 'checked' : '' %>
+                  >
+                  <span><%= participatingEvent %></span>
+                </label>
+              <% }) %>
+            </div>
+          </fieldset>
+
           <p id="clientError" class="client-error" aria-live="polite"></p>
           <button type="submit">Register Now</button>
         </form>

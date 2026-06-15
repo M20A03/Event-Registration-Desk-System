@@ -1,5 +1,5 @@
 const db = require("../config/database");
-const { EVENT, TICKET_TYPES } = require("../config/event");
+const { EVENT, TICKET_TYPES, PARTICIPATING_EVENTS } = require("../config/event");
 
 let initializationPromise = null;
 
@@ -18,6 +18,7 @@ function mapRegistration(row) {
     collegeName: row.college_name || "",
     phone: row.phone || "",
     ticketType: row.ticket_type,
+    participatingEvents: Array.isArray(row.participating_events) ? row.participating_events : [],
     registrationId: row.registration_id,
     eventName: row.event_name,
     createdAt: row.created_at,
@@ -37,6 +38,7 @@ async function initialize() {
       college_name VARCHAR(160),
       phone VARCHAR(30) DEFAULT '',
       ticket_type VARCHAR(40) NOT NULL CHECK (ticket_type IN ('General Admission', 'VIP', 'Student')),
+      participating_events JSONB NOT NULL DEFAULT '[]'::jsonb,
       registration_id VARCHAR(80) NOT NULL UNIQUE,
       event_name TEXT NOT NULL DEFAULT '${EVENT.name.replace(/'/g, "''")}',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -82,7 +84,8 @@ async function initialize() {
   const columnMigrations = [
     "ALTER TABLE registrations ADD COLUMN IF NOT EXISTS student_origin VARCHAR(40);",
     "ALTER TABLE registrations ADD COLUMN IF NOT EXISTS register_no VARCHAR(50);",
-    "ALTER TABLE registrations ADD COLUMN IF NOT EXISTS college_name VARCHAR(160);"
+    "ALTER TABLE registrations ADD COLUMN IF NOT EXISTS college_name VARCHAR(160);",
+    "ALTER TABLE registrations ADD COLUMN IF NOT EXISTS participating_events JSONB NOT NULL DEFAULT '[]'::jsonb;"
   ];
 
   for (const migration of columnMigrations) {
@@ -184,12 +187,17 @@ async function create(data) {
     throw new Error("Invalid ticket type.");
   }
 
+  const participatingEvents = Array.isArray(data.participatingEvents) ? data.participatingEvents : [];
+  if (!participatingEvents.length || participatingEvents.some((eventName) => !PARTICIPATING_EVENTS.includes(eventName))) {
+    throw new Error("Invalid participating events.");
+  }
+
   await ensureInitialized();
 
   const result = await db.query(
     `INSERT INTO registrations
-      (full_name, email, student_id, student_origin, register_no, college_name, phone, ticket_type, registration_id, event_name)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      (full_name, email, student_id, student_origin, register_no, college_name, phone, ticket_type, participating_events, registration_id, event_name)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, $10, $11)
      RETURNING *`,
     [
       data.fullName,
@@ -200,6 +208,7 @@ async function create(data) {
       data.collegeName || null,
       data.phone || "",
       data.ticketType,
+      JSON.stringify(participatingEvents),
       data.registrationId,
       data.eventName || EVENT.name
     ]

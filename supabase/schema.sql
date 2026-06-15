@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS registrations (
   college_name VARCHAR(160),
   phone VARCHAR(30) DEFAULT '',
   ticket_type VARCHAR(40) NOT NULL CHECK (ticket_type IN ('General Admission', 'VIP', 'Student')),
+  participating_events JSONB NOT NULL DEFAULT '[]'::jsonb,
   registration_id VARCHAR(80) NOT NULL UNIQUE,
   event_name TEXT NOT NULL DEFAULT 'Annual Tech Conference 2025',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

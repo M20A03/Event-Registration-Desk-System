@@ -2,7 +2,7 @@ const express = require("express");
 const { body, matchedData, validationResult } = require("express-validator");
 
 const Registration = require("../models/Registration");
-const { EVENT, TICKET_TYPES } = require("../config/event");
+const { EVENT, TICKET_TYPES, PARTICIPATING_EVENTS } = require("../config/event");
 const { sendConfirmationEmails } = require("../services/emailService");
 
 const router = express.Router();
@@ -61,7 +61,26 @@ const registrationValidators = [
     .trim()
     .isIn(TICKET_TYPES)
     .withMessage("Select a valid ticket type.")
-    .escape()
+    .escape(),
+  body("participatingEvents")
+    .customSanitizer((value) => {
+      if (Array.isArray(value)) {
+        return value;
+      }
+      if (value) {
+        return [value];
+      }
+      return [];
+    })
+    .custom((value) => {
+      if (!Array.isArray(value) || value.length === 0) {
+        throw new Error("Select at least one event to participate in.");
+      }
+      if (value.length > 4 || value.some((eventName) => !PARTICIPATING_EVENTS.includes(eventName))) {
+        throw new Error("Select valid participating events.");
+      }
+      return true;
+    })
 ];
 
 function generateRegistrationId() {
@@ -85,6 +104,7 @@ router.get(["/", "/register"], (req, res) => {
     title: "Register",
     eventName: EVENT.name,
     ticketTypes: TICKET_TYPES,
+    participatingEvents: PARTICIPATING_EVENTS,
     errors: [],
     formData: {}
   });
@@ -99,6 +119,7 @@ router.post("/register", registrationValidators, async (req, res, next) => {
         title: "Register",
         eventName: EVENT.name,
         ticketTypes: TICKET_TYPES,
+        participatingEvents: PARTICIPATING_EVENTS,
         errors: errors.array(),
         formData: req.body
       });
@@ -121,6 +142,7 @@ router.post("/register", registrationValidators, async (req, res, next) => {
       collegeName: data.studentOrigin === "Other College" ? data.collegeName : null,
       phone: data.phone || "",
       ticketType: data.ticketType,
+      participatingEvents: data.participatingEvents,
       registrationId: await createUniqueRegistrationId(),
       eventName: EVENT.name
     });

@@ -51,6 +51,7 @@
     const registerNo = form.registerNo.value.trim();
     const collegeName = form.collegeName.value.trim();
     const ticketType = form.ticketType.value;
+    const selectedEvents = form.querySelectorAll('input[name="participatingEvents"]:checked');
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     clientError.textContent = "";
@@ -70,6 +71,12 @@
     if (studentOrigin === "Other College" && !collegeName) {
       event.preventDefault();
       clientError.textContent = "College name is required for outside students.";
+      return;
+    }
+
+    if (!selectedEvents.length) {
+      event.preventDefault();
+      clientError.textContent = "Select at least one event to participate in.";
       return;
     }
 

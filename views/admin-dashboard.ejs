@@ -32,6 +32,7 @@
               <th>University / College</th>
               <th>Register No.</th>
               <th>College Name</th>
+              <th>Events</th>
               <th>Email</th>
               <th>Phone</th>
               <th>Ticket</th>
@@ -41,7 +42,7 @@
           <tbody>
             <% if (!registrations.length) { %>
               <tr>
-                <td colspan="9" class="empty-cell">No registrations yet.</td>
+                <td colspan="10" class="empty-cell">No registrations yet.</td>
               </tr>
             <% } %>
             <% registrations.forEach((registration) => { %>
@@ -51,6 +52,7 @@
                 <td data-label="University / College"><%= registration.studentOrigin || 'Not provided' %></td>
                 <td data-label="Register No."><%= registration.registerNo || 'Not applicable' %></td>
                 <td data-label="College Name"><%= registration.collegeName || 'Not applicable' %></td>
+                <td data-label="Events"><%= registration.participatingEvents && registration.participatingEvents.length ? registration.participatingEvents.join(', ') : 'Not selected' %></td>
                 <td data-label="Email"><%= registration.email %></td>
                 <td data-label="Phone"><%= registration.phone || 'Not provided' %></td>
                 <td data-label="Ticket"><%= registration.ticketType %></td>

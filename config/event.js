@@ -9,8 +9,15 @@ const EVENT = {
 };
 
 const TICKET_TYPES = ["General Admission", "VIP", "Student"];
+const PARTICIPATING_EVENTS = [
+  "Treasure Hunt",
+  "Debugging Challenge",
+  "Hackathon",
+  "Tech Quiz"
+];
 
 module.exports = {
   EVENT,
-  TICKET_TYPES
+  TICKET_TYPES,
+  PARTICIPATING_EVENTS
 };

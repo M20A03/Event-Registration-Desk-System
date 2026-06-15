@@ -176,6 +176,62 @@ h1 {
   font-weight: 400;
 }
 
+.event-choice-group {
+  min-width: 0;
+  border: 1px solid rgba(23, 107, 99, 0.14);
+  border-radius: 8px;
+  padding: 14px;
+  background: rgba(248, 251, 250, 0.82);
+}
+
+.event-choice-group legend {
+  padding: 0 6px;
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
+.event-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.event-choice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  cursor: pointer;
+  transition:
+    border-color var(--motion),
+    background-color var(--motion),
+    box-shadow var(--motion),
+    transform var(--motion);
+}
+
+.event-choice:hover {
+  border-color: rgba(23, 107, 99, 0.36);
+  box-shadow: 0 12px 24px rgba(23, 32, 38, 0.08);
+  transform: translateY(-1px);
+}
+
+.event-choice input {
+  width: 18px;
+  min-height: 18px;
+  accent-color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.event-choice span {
+  color: var(--ink);
+  font-weight: 800;
+}
+
 input,
 select {
   width: 100%;
@@ -434,7 +490,7 @@ button:hover::after,
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 1080px;
+  min-width: 1220px;
 }
 
 th,
@@ -601,6 +657,14 @@ tr:last-child td {
   button,
   .button-link {
     min-height: 52px;
+  }
+
+  .event-choice-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-choice {
+    min-height: 50px;
   }
 
   .details {

@@ -42,6 +42,10 @@
             <dd><%= registration.ticketType %></dd>
           </div>
           <div>
+            <dt>Events</dt>
+            <dd><%= registration.participatingEvents && registration.participatingEvents.length ? registration.participatingEvents.join(', ') : 'Not selected' %></dd>
+          </div>
+          <div>
             <dt>Email</dt>
             <dd><%= registration.email %></dd>
           </div>

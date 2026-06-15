@@ -24,6 +24,9 @@ function escapeICalText(value) {
 function createCalendarInvite(registration) {
   const now = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
   const uid = `${registration.registrationId}@annual-tech-conference-2025`;
+  const selectedEvents = registration.participatingEvents && registration.participatingEvents.length
+    ? registration.participatingEvents.join(", ")
+    : "Not selected";
 
   return [
     "BEGIN:VCALENDAR",
@@ -37,7 +40,7 @@ function createCalendarInvite(registration) {
     `DTSTART:${EVENT.startDate}`,
     `DTEND:${EVENT.endDate}`,
     `SUMMARY:${escapeICalText(EVENT.name)}`,
-    `DESCRIPTION:${escapeICalText(`${EVENT.description}. Registration ID: ${registration.registrationId}. Register No.: ${registration.registerNo || 'Not applicable'}. College: ${registration.collegeName || registration.studentOrigin || 'Not provided'}. Ticket: ${registration.ticketType}.`)}`,
+    `DESCRIPTION:${escapeICalText(`${EVENT.description}. Registration ID: ${registration.registrationId}. Register No.: ${registration.registerNo || 'Not applicable'}. College: ${registration.collegeName || registration.studentOrigin || 'Not provided'}. Ticket: ${registration.ticketType}. Events: ${selectedEvents}.`)}`,
     `LOCATION:${escapeICalText(EVENT.location)}`,
     "END:VEVENT",
     "END:VCALENDAR"
@@ -49,6 +52,9 @@ async function sendConfirmationEmails(registration) {
   const from = process.env.SENDER_EMAIL;
   const organizerEmail = process.env.ORGANIZER_EMAIL;
   const calendarInvite = createCalendarInvite(registration);
+  const selectedEvents = registration.participatingEvents && registration.participatingEvents.length
+    ? registration.participatingEvents.join(", ")
+    : "Not selected";
 
   const attendeeHtml = `
     <p>Hi ${registration.fullName},</p>
@@ -57,6 +63,7 @@ async function sendConfirmationEmails(registration) {
     <p>University / College: <strong>${registration.studentOrigin || "Not provided"}</strong></p>
     <p>Register No.: <strong>${registration.registerNo || "Not applicable"}</strong></p>
     <p>College Name: <strong>${registration.collegeName || "Not applicable"}</strong></p>
+    <p>Events Participating In: <strong>${selectedEvents}</strong></p>
     <p>Your selected ticket type is <strong>${registration.ticketType}</strong>.</p>
     
     <div style="margin: 20px 0; padding: 15px; border: 1px solid #176b63; border-radius: 6px; background-color: #f6faf9; max-width: 500px;">
@@ -76,6 +83,7 @@ async function sendConfirmationEmails(registration) {
       <li>University / College: ${registration.studentOrigin || "Not provided"}</li>
       <li>Register No.: ${registration.registerNo || "Not applicable"}</li>
       <li>College Name: ${registration.collegeName || "Not applicable"}</li>
+      <li>Events Participating In: ${selectedEvents}</li>
       <li>Phone: ${registration.phone || "Not provided"}</li>
       <li>Ticket Type: ${registration.ticketType}</li>
       <li>Registration ID: ${registration.registrationId}</li>
@@ -87,7 +95,7 @@ async function sendConfirmationEmails(registration) {
     to: registration.email,
     subject: `Registration confirmed: ${EVENT.name}`,
     html: attendeeHtml,
-    text: `Hi ${registration.fullName}, thank you for registering for ${EVENT.name}. Registration ID: ${registration.registrationId}. University / College: ${registration.studentOrigin || "Not provided"}. Register No.: ${registration.registerNo || "Not applicable"}. College Name: ${registration.collegeName || "Not applicable"}. Ticket: ${registration.ticketType}. WiFi Details - SSID: ${EVENT.wifiSsid}, Password: ${EVENT.wifiPassword}.`,
+    text: `Hi ${registration.fullName}, thank you for registering for ${EVENT.name}. Registration ID: ${registration.registrationId}. University / College: ${registration.studentOrigin || "Not provided"}. Register No.: ${registration.registerNo || "Not applicable"}. College Name: ${registration.collegeName || "Not applicable"}. Events: ${selectedEvents}. Ticket: ${registration.ticketType}. WiFi Details - SSID: ${EVENT.wifiSsid}, Password: ${EVENT.wifiPassword}.`,
     attachments: [
       {
         filename: "annual-tech-conference-2025.ics",
@@ -102,7 +110,7 @@ async function sendConfirmationEmails(registration) {
     to: organizerEmail,
     subject: `New registration: ${registration.fullName}`,
     html: organizerHtml,
-    text: `New registration for ${EVENT.name}: ${registration.fullName}, ${registration.email}, ${registration.studentOrigin || "Not provided"}, Register No.: ${registration.registerNo || "Not applicable"}, College Name: ${registration.collegeName || "Not applicable"}, ${registration.phone || "No phone"}, ${registration.ticketType}, ${registration.registrationId}.`
+    text: `New registration for ${EVENT.name}: ${registration.fullName}, ${registration.email}, ${registration.studentOrigin || "Not provided"}, Register No.: ${registration.registerNo || "Not applicable"}, College Name: ${registration.collegeName || "Not applicable"}, Events: ${selectedEvents}, ${registration.phone || "No phone"}, ${registration.ticketType}, ${registration.registrationId}.`
   });
 }
 
