@@ -2,6 +2,31 @@ const { Pool } = require("pg");
 
 let pool = null;
 
+function isDatabaseConnectionError(error) {
+  if (!error) {
+    return false;
+  }
+
+  const message = String(error.message || "").toLowerCase();
+  const databaseErrorCodes = new Set([
+    "28P01",
+    "3D000",
+    "ECONNREFUSED",
+    "ENOTFOUND",
+    "ETIMEDOUT",
+    "ECONNRESET"
+  ]);
+
+  return (
+    databaseErrorCodes.has(error.code) ||
+    message.includes("database_url") ||
+    message.includes("password authentication failed") ||
+    message.includes("connection terminated") ||
+    message.includes("connect timeout") ||
+    message.includes("no pg_hba.conf entry")
+  );
+}
+
 function getPool() {
   if (pool) return pool;
 
@@ -27,5 +52,6 @@ function getPool() {
 }
 
 module.exports = {
-  query: (...args) => getPool().query(...args)
+  query: (...args) => getPool().query(...args),
+  isDatabaseConnectionError
 };

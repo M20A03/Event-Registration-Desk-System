@@ -9,6 +9,7 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 
+const db = require("./config/database");
 const Registration = require("./models/Registration");
 const registrationRoutes = require("./routes/registrationRoutes");
 const adminRoutes = require("./routes/adminRoutes");
@@ -47,6 +48,14 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   console.error(err);
+
+  if (db.isDatabaseConnectionError(err)) {
+    return res.status(503).render("error", {
+      title: "Registration temporarily unavailable",
+      message: "The database connection is not configured correctly. Please check the Supabase DATABASE_URL and password, then try again."
+    });
+  }
+
   res.status(500).render("error", {
     title: "Something went wrong",
     message: "Please try again in a moment."
@@ -59,6 +68,11 @@ Registration.initialize()
     console.log("Connected and migrated Supabase Postgres");
   })
   .catch((error) => {
+    if (db.isDatabaseConnectionError(error)) {
+      console.error("Failed to initialize database. Check DATABASE_URL, Supabase password, and DATABASE_SSL:", error.message);
+      return;
+    }
+
     console.error("Failed to initialize database:", error.message);
   });
 
