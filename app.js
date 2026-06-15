@@ -63,7 +63,7 @@ app.use((err, req, res, next) => {
 });
 
 // Safe database initialization
-Registration.initialize()
+Registration.ensureInitialized()
   .then(() => {
     console.log("Connected and migrated Supabase Postgres");
   })

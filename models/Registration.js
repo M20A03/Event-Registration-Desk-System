@@ -1,6 +1,8 @@
 const db = require("../config/database");
 const { EVENT, TICKET_TYPES } = require("../config/event");
 
+let initializationPromise = null;
+
 function mapRegistration(row) {
   if (!row) {
     return null;
@@ -108,7 +110,17 @@ async function initialize() {
   }
 }
 
+function ensureInitialized() {
+  if (!initializationPromise) {
+    initializationPromise = initialize();
+  }
+
+  return initializationPromise;
+}
+
 async function existsRegistrationId(registrationId) {
+  await ensureInitialized();
+
   const result = await db.query(
     "SELECT 1 FROM registrations WHERE registration_id = $1 LIMIT 1",
     [registrationId]
@@ -118,6 +130,8 @@ async function existsRegistrationId(registrationId) {
 }
 
 async function findByEmailAndEvent(email, eventName = EVENT.name) {
+  await ensureInitialized();
+
   const result = await db.query(
     "SELECT * FROM registrations WHERE email = $1 AND event_name = $2 LIMIT 1",
     [email, eventName]
@@ -130,6 +144,8 @@ async function findByStudentIdAndEvent(studentId, eventName = EVENT.name) {
   if (!studentId) {
     return null;
   }
+  await ensureInitialized();
+
   const result = await db.query(
     "SELECT * FROM registrations WHERE student_id = $1 AND event_name = $2 LIMIT 1",
     [studentId, eventName]
@@ -142,6 +158,8 @@ async function findByRegisterNoAndEvent(registerNo, eventName = EVENT.name) {
   if (!registerNo) {
     return null;
   }
+  await ensureInitialized();
+
   const result = await db.query(
     "SELECT * FROM registrations WHERE register_no = $1 AND event_name = $2 LIMIT 1",
     [registerNo, eventName]
@@ -151,6 +169,8 @@ async function findByRegisterNoAndEvent(registerNo, eventName = EVENT.name) {
 }
 
 async function findByRegistrationId(registrationId) {
+  await ensureInitialized();
+
   const result = await db.query(
     "SELECT * FROM registrations WHERE registration_id = $1 LIMIT 1",
     [registrationId]
@@ -163,6 +183,8 @@ async function create(data) {
   if (!TICKET_TYPES.includes(data.ticketType)) {
     throw new Error("Invalid ticket type.");
   }
+
+  await ensureInitialized();
 
   const result = await db.query(
     `INSERT INTO registrations
@@ -187,6 +209,8 @@ async function create(data) {
 }
 
 async function findAllByEvent(eventName = EVENT.name) {
+  await ensureInitialized();
+
   const result = await db.query(
     "SELECT * FROM registrations WHERE event_name = $1 ORDER BY created_at DESC",
     [eventName]
@@ -197,6 +221,7 @@ async function findAllByEvent(eventName = EVENT.name) {
 
 module.exports = {
   initialize,
+  ensureInitialized,
   existsRegistrationId,
   findByEmailAndEvent,
   findByStudentIdAndEvent,
