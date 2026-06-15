@@ -15,8 +15,8 @@
         <p class="lede">Your registration for <%= eventName %> is complete. A confirmation email with a calendar file has been sent to <%= registration.email %>.</p>
 
         <% if (locals.alreadyRegistered) { %>
-          <div class="alert note-alert" role="alert" style="background-color: var(--danger-bg); border: 1px solid #f3c2bd; color: var(--danger-text); margin-bottom: 20px; text-align: left; padding: 10px 14px; border-radius: 6px;">
-            <p style="margin: 0; font-weight: bold;">Note: This student was already registered. Displaying their existing details.</p>
+          <div class="alert note-alert" role="alert">
+            <p>Note: This student was already registered. Displaying their existing details.</p>
           </div>
         <% } %>
 
@@ -51,17 +51,17 @@
           </div>
         </dl>
 
-        <div class="wifi-card" style="background: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color: #fff; padding: 20px; border-radius: 8px; margin: 24px 0; text-align: center; box-shadow: 0 8px 20px rgba(23, 107, 99, 0.25);">
-          <h3 style="margin: 0 0 10px 0; font-size: 1.15rem; letter-spacing: 0.5px; text-transform: uppercase;">Venue WiFi Access</h3>
-          <p style="margin: 0 0 12px 0; font-size: 0.9rem; opacity: 0.85;">Share these connection credentials with the attendee:</p>
-          <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-            <div style="background: rgba(255,255,255,0.12); padding: 8px 16px; border-radius: 6px; flex: 1; min-width: 140px;">
-              <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.75; font-weight: bold;">Network Name (SSID)</div>
-              <div style="font-size: 1rem; font-weight: bold; margin-top: 2px;"><%= event.wifiSsid %></div>
+        <div class="wifi-card">
+          <h3>Venue WiFi Access</h3>
+          <p>Share these connection credentials with the attendee:</p>
+          <div class="wifi-grid">
+            <div>
+              <span>Network Name (SSID)</span>
+              <strong><%= event.wifiSsid %></strong>
             </div>
-            <div style="background: rgba(255,255,255,0.12); padding: 8px 16px; border-radius: 6px; flex: 1; min-width: 140px;">
-              <div style="font-size: 0.75rem; text-transform: uppercase; opacity: 0.75; font-weight: bold;">Password</div>
-              <div style="font-size: 1rem; font-weight: bold; margin-top: 2px; letter-spacing: 0.5px;"><%= event.wifiPassword %></div>
+            <div>
+              <span>Password</span>
+              <strong><%= event.wifiPassword %></strong>
             </div>
           </div>
         </div>

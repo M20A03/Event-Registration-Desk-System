@@ -46,15 +46,15 @@
             <% } %>
             <% registrations.forEach((registration) => { %>
               <tr>
-                <td><%= registration.registrationId %></td>
-                <td><%= registration.fullName %></td>
-                <td><%= registration.studentOrigin || 'Not provided' %></td>
-                <td><%= registration.registerNo || 'Not applicable' %></td>
-                <td><%= registration.collegeName || 'Not applicable' %></td>
-                <td><%= registration.email %></td>
-                <td><%= registration.phone || 'Not provided' %></td>
-                <td><%= registration.ticketType %></td>
-                <td><%= registration.createdAt ? registration.createdAt.toLocaleString() : '' %></td>
+                <td data-label="Registration ID"><%= registration.registrationId %></td>
+                <td data-label="Name"><%= registration.fullName %></td>
+                <td data-label="University / College"><%= registration.studentOrigin || 'Not provided' %></td>
+                <td data-label="Register No."><%= registration.registerNo || 'Not applicable' %></td>
+                <td data-label="College Name"><%= registration.collegeName || 'Not applicable' %></td>
+                <td data-label="Email"><%= registration.email %></td>
+                <td data-label="Phone"><%= registration.phone || 'Not provided' %></td>
+                <td data-label="Ticket"><%= registration.ticketType %></td>
+                <td data-label="Registered"><%= registration.createdAt ? registration.createdAt.toLocaleString() : '' %></td>
               </tr>
             <% }) %>
           </tbody>

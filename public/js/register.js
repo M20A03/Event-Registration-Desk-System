@@ -9,15 +9,18 @@
   const studentOriginSelect = form.studentOrigin;
   const registerNoInput = form.registerNo;
   const registerNoLabel = document.getElementById("registerNoLabel");
+  const registerNoField = document.querySelector('[data-student-field="registerNo"]');
   const collegeNameInput = form.collegeName;
   const collegeNameLabel = document.getElementById("collegeNameLabel");
+  const collegeNameField = document.querySelector('[data-student-field="collegeName"]');
 
   function updateStudentFields() {
     const isChristStudent = studentOriginSelect.value === "Christ University";
     const isOutsideStudent = studentOriginSelect.value === "Other College";
 
-    if (registerNoLabel) registerNoLabel.style.display = isChristStudent ? "" : "none";
-    registerNoInput.style.display = isChristStudent ? "" : "none";
+    if (registerNoField) registerNoField.style.display = isChristStudent ? "" : "none";
+    if (registerNoLabel) registerNoLabel.style.display = "";
+    registerNoInput.style.display = "";
     if (isChristStudent) {
       registerNoInput.setAttribute("required", "required");
     } else {
@@ -25,8 +28,9 @@
       registerNoInput.value = "";
     }
 
-    if (collegeNameLabel) collegeNameLabel.style.display = isOutsideStudent ? "" : "none";
-    collegeNameInput.style.display = isOutsideStudent ? "" : "none";
+    if (collegeNameField) collegeNameField.style.display = isOutsideStudent ? "" : "none";
+    if (collegeNameLabel) collegeNameLabel.style.display = "";
+    collegeNameInput.style.display = "";
     if (isOutsideStudent) {
       collegeNameInput.setAttribute("required", "required");
     } else {
