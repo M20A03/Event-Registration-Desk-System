@@ -22,16 +22,32 @@ const registrationValidators = [
     .isEmail()
     .withMessage("Enter a valid email address.")
     .normalizeEmail(),
-  body("studentId")
+  body("studentOrigin")
+    .trim()
+    .isIn(["Christ University", "Other College"])
+    .withMessage("Select whether the student is from Christ University or another college.")
+    .escape(),
+  body("registerNo")
     .trim()
     .custom((value, { req }) => {
-      if (req.body.ticketType === "Student" && !value) {
-        throw new Error("Student ID is required for Student tickets.");
+      if (req.body.studentOrigin === "Christ University" && !value) {
+        throw new Error("Register No. is required for Christ University students.");
       }
       return true;
     })
     .isLength({ max: 50 })
-    .withMessage("Student ID must be 50 characters or fewer.")
+    .withMessage("Register No. must be 50 characters or fewer.")
+    .escape(),
+  body("collegeName")
+    .trim()
+    .custom((value, { req }) => {
+      if (req.body.studentOrigin === "Other College" && !value) {
+        throw new Error("College name is required for outside students.");
+      }
+      return true;
+    })
+    .isLength({ max: 160 })
+    .withMessage("College name must be 160 characters or fewer.")
     .escape(),
   body("phone")
     .optional({ checkFalsy: true })
@@ -90,8 +106,8 @@ router.post("/register", registrationValidators, async (req, res, next) => {
 
     const data = matchedData(req, { locations: ["body"] });
     const duplicateEmail = await Registration.findByEmailAndEvent(data.email, EVENT.name);
-    const duplicateStudentId = data.studentId ? await Registration.findByStudentIdAndEvent(data.studentId, EVENT.name) : null;
-    const duplicate = duplicateEmail || duplicateStudentId;
+    const duplicateRegisterNo = data.registerNo ? await Registration.findByRegisterNoAndEvent(data.registerNo, EVENT.name) : null;
+    const duplicate = duplicateEmail || duplicateRegisterNo;
 
     if (duplicate) {
       return res.redirect(`/success?registrationId=${encodeURIComponent(duplicate.registrationId)}&alreadyRegistered=true`);
@@ -100,7 +116,9 @@ router.post("/register", registrationValidators, async (req, res, next) => {
     const registration = await Registration.create({
       fullName: data.fullName,
       email: data.email,
-      studentId: data.studentId || null,
+      studentOrigin: data.studentOrigin,
+      registerNo: data.studentOrigin === "Christ University" ? data.registerNo : null,
+      collegeName: data.studentOrigin === "Other College" ? data.collegeName : null,
       phone: data.phone || "",
       ticketType: data.ticketType,
       registrationId: await createUniqueRegistrationId(),
@@ -117,8 +135,8 @@ router.post("/register", registrationValidators, async (req, res, next) => {
   } catch (error) {
     if (error.code === "23505") {
       const duplicateEmail = await Registration.findByEmailAndEvent(req.body.email, EVENT.name);
-      const duplicateStudentId = req.body.studentId ? await Registration.findByStudentIdAndEvent(req.body.studentId, EVENT.name) : null;
-      const duplicate = duplicateEmail || duplicateStudentId;
+      const duplicateRegisterNo = req.body.registerNo ? await Registration.findByRegisterNoAndEvent(req.body.registerNo, EVENT.name) : null;
+      const duplicate = duplicateEmail || duplicateRegisterNo;
       if (duplicate) {
         return res.redirect(`/success?registrationId=${encodeURIComponent(duplicate.registrationId)}&alreadyRegistered=true`);
       }

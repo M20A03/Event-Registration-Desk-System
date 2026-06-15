@@ -83,7 +83,9 @@ router.get("/download", requireAdmin, async (req, res, next) => {
     const header = [
       "Registration ID",
       "Full Name",
-      "Student ID",
+      "University / College",
+      "Register No.",
+      "College Name",
       "Email",
       "Phone",
       "Ticket Type",
@@ -93,7 +95,9 @@ router.get("/download", requireAdmin, async (req, res, next) => {
     const rows = registrations.map((registration) => [
       registration.registrationId,
       registration.fullName,
-      registration.studentId || "",
+      registration.studentOrigin || "",
+      registration.registerNo || "",
+      registration.collegeName || "",
       registration.email,
       registration.phone,
       registration.ticketType,

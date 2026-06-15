@@ -37,7 +37,7 @@ function createCalendarInvite(registration) {
     `DTSTART:${EVENT.startDate}`,
     `DTEND:${EVENT.endDate}`,
     `SUMMARY:${escapeICalText(EVENT.name)}`,
-    `DESCRIPTION:${escapeICalText(`${EVENT.description}. Registration ID: ${registration.registrationId}. Student ID: ${registration.studentId || ''}. Ticket: ${registration.ticketType}.`)}`,
+    `DESCRIPTION:${escapeICalText(`${EVENT.description}. Registration ID: ${registration.registrationId}. Register No.: ${registration.registerNo || 'Not applicable'}. College: ${registration.collegeName || registration.studentOrigin || 'Not provided'}. Ticket: ${registration.ticketType}.`)}`,
     `LOCATION:${escapeICalText(EVENT.location)}`,
     "END:VEVENT",
     "END:VCALENDAR"
@@ -54,7 +54,9 @@ async function sendConfirmationEmails(registration) {
     <p>Hi ${registration.fullName},</p>
     <p>Thank you for registering for <strong>${EVENT.name}</strong>.</p>
     <p>Your unique registration ID is <strong>${registration.registrationId}</strong>.</p>
-    <p>Your Student ID: <strong>${registration.studentId || "Not provided"}</strong></p>
+    <p>University / College: <strong>${registration.studentOrigin || "Not provided"}</strong></p>
+    <p>Register No.: <strong>${registration.registerNo || "Not applicable"}</strong></p>
+    <p>College Name: <strong>${registration.collegeName || "Not applicable"}</strong></p>
     <p>Your selected ticket type is <strong>${registration.ticketType}</strong>.</p>
     
     <div style="margin: 20px 0; padding: 15px; border: 1px solid #176b63; border-radius: 6px; background-color: #f6faf9; max-width: 500px;">
@@ -71,7 +73,9 @@ async function sendConfirmationEmails(registration) {
     <ul>
       <li>Name: ${registration.fullName}</li>
       <li>Email: ${registration.email}</li>
-      <li>Student ID: ${registration.studentId || "Not provided"}</li>
+      <li>University / College: ${registration.studentOrigin || "Not provided"}</li>
+      <li>Register No.: ${registration.registerNo || "Not applicable"}</li>
+      <li>College Name: ${registration.collegeName || "Not applicable"}</li>
       <li>Phone: ${registration.phone || "Not provided"}</li>
       <li>Ticket Type: ${registration.ticketType}</li>
       <li>Registration ID: ${registration.registrationId}</li>
@@ -83,7 +87,7 @@ async function sendConfirmationEmails(registration) {
     to: registration.email,
     subject: `Registration confirmed: ${EVENT.name}`,
     html: attendeeHtml,
-    text: `Hi ${registration.fullName}, thank you for registering for ${EVENT.name}. Registration ID: ${registration.registrationId}. Student ID: ${registration.studentId}. Ticket: ${registration.ticketType}. WiFi Details - SSID: ${EVENT.wifiSsid}, Password: ${EVENT.wifiPassword}.`,
+    text: `Hi ${registration.fullName}, thank you for registering for ${EVENT.name}. Registration ID: ${registration.registrationId}. University / College: ${registration.studentOrigin || "Not provided"}. Register No.: ${registration.registerNo || "Not applicable"}. College Name: ${registration.collegeName || "Not applicable"}. Ticket: ${registration.ticketType}. WiFi Details - SSID: ${EVENT.wifiSsid}, Password: ${EVENT.wifiPassword}.`,
     attachments: [
       {
         filename: "annual-tech-conference-2025.ics",
@@ -98,7 +102,7 @@ async function sendConfirmationEmails(registration) {
     to: organizerEmail,
     subject: `New registration: ${registration.fullName}`,
     html: organizerHtml,
-    text: `New registration for ${EVENT.name}: ${registration.fullName}, ${registration.email}, Student ID: ${registration.studentId}, ${registration.phone || "No phone"}, ${registration.ticketType}, ${registration.registrationId}.`
+    text: `New registration for ${EVENT.name}: ${registration.fullName}, ${registration.email}, ${registration.studentOrigin || "Not provided"}, Register No.: ${registration.registerNo || "Not applicable"}, College Name: ${registration.collegeName || "Not applicable"}, ${registration.phone || "No phone"}, ${registration.ticketType}, ${registration.registrationId}.`
   });
 }
 

@@ -29,7 +29,9 @@
             <tr>
               <th>Registration ID</th>
               <th>Name</th>
-              <th>Student ID</th>
+              <th>University / College</th>
+              <th>Register No.</th>
+              <th>College Name</th>
               <th>Email</th>
               <th>Phone</th>
               <th>Ticket</th>
@@ -39,14 +41,16 @@
           <tbody>
             <% if (!registrations.length) { %>
               <tr>
-                <td colspan="7" class="empty-cell">No registrations yet.</td>
+                <td colspan="9" class="empty-cell">No registrations yet.</td>
               </tr>
             <% } %>
             <% registrations.forEach((registration) => { %>
               <tr>
                 <td><%= registration.registrationId %></td>
                 <td><%= registration.fullName %></td>
-                <td><%= registration.studentId || 'Not provided' %></td>
+                <td><%= registration.studentOrigin || 'Not provided' %></td>
+                <td><%= registration.registerNo || 'Not applicable' %></td>
+                <td><%= registration.collegeName || 'Not applicable' %></td>
                 <td><%= registration.email %></td>
                 <td><%= registration.phone || 'Not provided' %></td>
                 <td><%= registration.ticketType %></td>

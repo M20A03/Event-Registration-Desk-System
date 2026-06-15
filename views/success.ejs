@@ -26,8 +26,16 @@
             <dd><%= registration.registrationId %></dd>
           </div>
           <div>
-            <dt>Student ID</dt>
-            <dd><%= registration.studentId || 'Not provided' %></dd>
+            <dt>University / College</dt>
+            <dd><%= registration.studentOrigin || 'Not provided' %></dd>
+          </div>
+          <div>
+            <dt>Register No.</dt>
+            <dd><%= registration.registerNo || 'Not applicable' %></dd>
+          </div>
+          <div>
+            <dt>College Name</dt>
+            <dd><%= registration.collegeName || 'Not applicable' %></dd>
           </div>
           <div>
             <dt>Ticket Type</dt>
@@ -37,7 +45,7 @@
             <dt>Email</dt>
             <dd><%= registration.email %></dd>
           </div>
-          <div style="grid-column: span 2;">
+          <div>
             <dt>Phone</dt>
             <dd><%= registration.phone || 'Not provided' %></dd>
           </div>

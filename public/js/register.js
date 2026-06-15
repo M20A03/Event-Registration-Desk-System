@@ -6,49 +6,66 @@
     return;
   }
 
-  const ticketTypeSelect = form.ticketType;
-  const studentIdInput = form.studentId;
-  const studentIdLabel = document.getElementById("studentIdLabel");
-  const studentIdRequired = document.getElementById("studentIdRequired");
+  const studentOriginSelect = form.studentOrigin;
+  const registerNoInput = form.registerNo;
+  const registerNoLabel = document.getElementById("registerNoLabel");
+  const collegeNameInput = form.collegeName;
+  const collegeNameLabel = document.getElementById("collegeNameLabel");
 
-  function updateStudentIdVisibility() {
-    if (ticketTypeSelect.value === "Student") {
-      if (studentIdLabel) studentIdLabel.style.display = "";
-      if (studentIdRequired) studentIdRequired.style.display = "inline";
-      studentIdInput.style.display = "";
-      studentIdInput.setAttribute("required", "required");
+  function updateStudentFields() {
+    const isChristStudent = studentOriginSelect.value === "Christ University";
+    const isOutsideStudent = studentOriginSelect.value === "Other College";
+
+    if (registerNoLabel) registerNoLabel.style.display = isChristStudent ? "" : "none";
+    registerNoInput.style.display = isChristStudent ? "" : "none";
+    if (isChristStudent) {
+      registerNoInput.setAttribute("required", "required");
     } else {
-      if (studentIdLabel) studentIdLabel.style.display = "none";
-      if (studentIdRequired) studentIdRequired.style.display = "none";
-      studentIdInput.style.display = "none";
-      studentIdInput.removeAttribute("required");
-      studentIdInput.value = "";
+      registerNoInput.removeAttribute("required");
+      registerNoInput.value = "";
+    }
+
+    if (collegeNameLabel) collegeNameLabel.style.display = isOutsideStudent ? "" : "none";
+    collegeNameInput.style.display = isOutsideStudent ? "" : "none";
+    if (isOutsideStudent) {
+      collegeNameInput.setAttribute("required", "required");
+    } else {
+      collegeNameInput.removeAttribute("required");
+      collegeNameInput.value = "";
     }
   }
 
-  if (ticketTypeSelect && studentIdInput) {
-    ticketTypeSelect.addEventListener("change", updateStudentIdVisibility);
-    updateStudentIdVisibility();
+  if (studentOriginSelect && registerNoInput && collegeNameInput) {
+    studentOriginSelect.addEventListener("change", updateStudentFields);
+    updateStudentFields();
   }
 
   form.addEventListener("submit", function (event) {
     const fullName = form.fullName.value.trim();
     const email = form.email.value.trim();
-    const studentId = form.studentId.value.trim();
+    const studentOrigin = form.studentOrigin.value;
+    const registerNo = form.registerNo.value.trim();
+    const collegeName = form.collegeName.value.trim();
     const ticketType = form.ticketType.value;
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     clientError.textContent = "";
 
-    if (!fullName || !email || !ticketType) {
+    if (!fullName || !email || !studentOrigin || !ticketType) {
       event.preventDefault();
       clientError.textContent = "Please fill in all required fields.";
       return;
     }
 
-    if (ticketType === "Student" && !studentId) {
+    if (studentOrigin === "Christ University" && !registerNo) {
       event.preventDefault();
-      clientError.textContent = "Student ID is required for Student tickets.";
+      clientError.textContent = "Register No. is required for Christ University students.";
+      return;
+    }
+
+    if (studentOrigin === "Other College" && !collegeName) {
+      event.preventDefault();
+      clientError.textContent = "College name is required for outside students.";
       return;
     }
 
